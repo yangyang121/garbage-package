@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-// import { createStore, applyMiddleware } from "redux";
 import { createStore,applyMiddleware } from "./package/redux";
 import { Provider } from "./package/react-redux";
 

@@ -1,26 +1,18 @@
-import React from "react";
-import { bindActionCreators } from "redux";
-import { connect } from "./package/react-redux";
-import { addAction, resetAction } from "./index";
+import React, { useRef } from "react";
+import Home from "./containers/Home";
 import "./App.css";
 
-function App(props) {
+function App() {
+  const homeEl = useRef(null);
+  const handleClick = () => {
+    homeEl.current.click()
+  };
   return (
     <div className="App">
-      <p>{props.count}</p>
-      <button onClick={props.actions.addAction}>add</button>
-      <button onClick={props.actions.resetAction}>reset</button>
+      <Home ref={homeEl} title='Test' />
+      <button onClick={handleClick}>click</button>
     </div>
   );
 }
 
-const mapStateToProps = (state) => ({
-  count: state.count,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  addAction: () => dispatch(addAction()),
-  actions: bindActionCreators({ addAction, resetAction }, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;
