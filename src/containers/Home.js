@@ -4,6 +4,7 @@ import Link from "../package/react-router/react-router-dom/Link"
 import { bindActionCreators } from "../package/redux"
 import { connect } from "../package/react-redux"
 import { addAction, resetAction } from "../index"
+// import _ from "lodash"
 
 const Home = React.forwardRef((props, ref) => {
   console.log(props)
