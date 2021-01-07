@@ -54,6 +54,8 @@ function handleExport() {
   const ws_name = "Sheet1" //Excel第一个sheet的名称
   const wb = XLSX.utils.book_new()
   const ws = XLSX.utils.aoa_to_sheet(arr)
+  ws["!rows"] = [{ hpt: 30 }, { hpx: 30 }, { hpx: 30 }]
+  ws["!cols"] = [{ wch: 1 }, { wch: 7 }, { wch: 10 }, { wch: 20 }]
   XLSX.utils.book_append_sheet(wb, ws, ws_name) //将数据添加到工作薄
   XLSX.writeFile(wb, filename) //导出Excel
 }
