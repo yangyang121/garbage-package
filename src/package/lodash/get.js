@@ -40,7 +40,7 @@ function toKey(value) {
   return result === "0" && 1 / value === -Infinity ? "-0" : result
 }
 
-function get(object, path, defaultValue) {
+export default function get(object, path, defaultValue) {
   path = transformPath(path)
   let index = 0
   while (object && index < path.length) {
@@ -52,13 +52,13 @@ function get(object, path, defaultValue) {
   return defaultValue
 }
 
-const object = { a: [{ b: { c: 3 } }] }
+// const object = { a: [{ b: { c: 3 } }] }
 
-get(object, "a[0].b.c")
-// => 3
+// get(object, "a[0].b.c")
+// // => 3
 
-get(object, ["a", "0", "b", "c"])
-// => 3
+// get(object, ["a", "0", "b", "c"])
+// // => 3
 
-get(object, "a.b.c", "default")
+// get(object, "a.b.c", "default")
 // => 'default'
