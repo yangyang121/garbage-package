@@ -103,3 +103,42 @@ export const parse = (jsonStr) => {
 
   return parseValue()
 }
+
+export const stringify = (obj) => {
+  function stringifyValue(value) {
+    if (typeof value !== "object" || value === null) {
+      return stringifyNormal(value)
+    }
+    console.log(value)
+    let ans = ""
+    if (Array.isArray(value)) {
+      ans += "["
+      for (let i = 0; i < value.length; i++) {
+        ans += stringifyValue(value[i])
+        if (i !== value.length - 1) ans += ","
+      }
+      ans += "]"
+    } else {
+      ans += "{"
+      for (let k in value) {
+        const key = stringifyNormal(k)
+        const v = value[k]
+        if (v !== undefined) {
+          const value = stringifyValue(v)
+          ans += `${key}:${value},`
+        }
+      }
+      ans = ans.substring(0, ans.length - 1)
+      ans += "}"
+    }
+    return ans
+  }
+  function stringifyNormal(obj) {
+    if (typeof obj === "string") {
+      return '"' + obj + '"'
+    }
+    return "" + obj
+  }
+
+  return stringifyValue(obj)
+}
