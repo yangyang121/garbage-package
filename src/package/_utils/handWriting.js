@@ -55,18 +55,75 @@ export function newNew(Con, ...args) {
   return typeof res == "object" ? res : obj
 }
 
-export function curry(fn, args) {
+export function curry(fn, ...args) {
   var length = fn.length
   args = args || []
   return function () {
-    var _args = args.slice(0)
     for (var i = 0; i < arguments.length; i++) {
-      _args.push(arguments[i])
+      args.push(arguments[i])
     }
-    if (_args.length < length) {
-      return curry.call(this, fn, _args)
+    if (args.length < length) {
+      return curry.call(this, fn, args)
     } else {
-      return fn.apply(this, _args)
+      return fn.apply(this, args)
     }
   }
+}
+
+export function debounce(fn, wait, immediate) {
+  let timer = null
+  let result = null
+  function debounced(...args) {
+    const context = this
+    if (timer) clearTimeout(timer)
+    if (immediate) {
+      const callNow = !timer
+      setTimeout(() => {
+        timer = null
+      }, wait)
+      if (callNow) result = fn.apply(context, args)
+    } else {
+      timer = setTimeout(() => {
+        result = fn.apply(context, wait)
+      }, wait)
+    }
+    return result
+  }
+  debounced.cancel = function () {
+    clearTimeout(timer)
+    timer = null
+  }
+  return debounced
+}
+
+export function throttle(fn, wait, options = {}) {
+  let timer = null
+  let previous = 0
+  function throttled(...args) {
+    let now = Date.now()
+    if (!previous && options.leading === false) previous = now
+    let remaining = wait - (now - previous)
+    if (remaining <= 0 || remaining > wait) {
+      if (timer) {
+        clearTimeout(timer)
+        timer = null
+      }
+      fn.apply(this, args)
+      previous = Date.now()
+    } else if (!timer && options.trailing !== false) {
+      timer = setTimeout(() => {
+        previous = options.leading === false ? 0 : new Date().getTime()
+        fn.apply(this, args)
+        timer = null
+      }, remaining)
+    }
+  }
+
+  throttled.cancel = function () {
+    clearTimeout(timer)
+    previous = 0
+    timer = null
+  }
+
+  return throttled
 }
