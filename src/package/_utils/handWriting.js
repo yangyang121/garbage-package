@@ -127,3 +127,40 @@ export function throttle(fn, wait, options = {}) {
 
   return throttled
 }
+
+export function transformToTree(data) {
+  const ans = []
+  const m = new Map()
+  for (let c of data) {
+    m.set(c.id, c)
+  }
+  for (let c of data) {
+    if (c.pId) {
+      const parent = m.get(c.pId)
+      delete c.pId
+      if (!Array.isArray(parent.children)) parent.children = []
+      parent.children.push(c)
+    } else {
+      ans.push(c)
+    }
+  }
+  return ans
+}
+
+export function transformToFlat(data) {
+  const queue = Array.isArray(data) ? data : [data]
+  const ans = []
+  while (queue.length) {
+    const item = queue.shift()
+    const pId = item.id
+    const children = item.children || []
+    delete item.children
+    console.log(item)
+    ans.push(item)
+    for (let c of children) {
+      c.pId = pId
+      queue.push(c)
+    }
+  }
+  return ans
+}
