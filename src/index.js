@@ -7,48 +7,57 @@ import { createStore,applyMiddleware } from "./package/redux";
 import { Provider } from "./package/react-redux";
 
 function loggerOne({ getState }) {
-  return (next) => (action) => {
-    console.log("will dispatch loggerOne", action);
-
-    // 调用 middleware 链中下一个 middleware 的 dispatch。
-    const returnValue = next(action);
-
-    console.log("state after dispatch loggerOne", getState());
-
-    // 一般会是 action 本身，除非
-    // 后面的 middleware 修改了它。
-    return returnValue;
-  };
+  return (next) => {
+    console.log(1)
+    return (action) => {
+      console.log("will dispatch loggerOne", action);
+  
+      // 调用 middleware 链中下一个 middleware 的 dispatch。
+      const returnValue = next(action);
+  
+      console.log("state after dispatch loggerOne", getState());
+  
+      // 一般会是 action 本身，除非
+      // 后面的 middleware 修改了它。
+      return returnValue;
+    };
+  }
 }
 
 function loggerTwo({ getState }) {
-  return (next) => (action) => {
-    console.log("will dispatch loggerTwo", action);
-
-    // 调用 middleware 链中下一个 middleware 的 dispatch。
-    const returnValue = next(action);
-
-    console.log("state after dispatch loggerTwo", getState());
-
-    // 一般会是 action 本身，除非
-    // 后面的 middleware 修改了它。
-    return returnValue;
-  };
+  return (next) => {
+    console.log(2)
+    return (action) => {
+      console.log("will dispatch loggerTwo", action);
+  
+      // 调用 middleware 链中下一个 middleware 的 dispatch。
+      const returnValue = next(action);
+  
+      console.log("state after dispatch loggerTwo", getState());
+  
+      // 一般会是 action 本身，除非
+      // 后面的 middleware 修改了它。
+      return returnValue;
+    };
+  }
 }
 
 function loggerThree({ getState }) {
-  return (next) => (action) => {
-    console.log("will dispatch loggerThree", action);
-
-    // 调用 middleware 链中下一个 middleware 的 dispatch。
-    const returnValue = next(action);
-
-    console.log("state after dispatch loggerThree", getState());
-
-    // 一般会是 action 本身，除非
-    // 后面的 middleware 修改了它。
-    return returnValue;
-  };
+  return (next) => {
+    console.log(3)
+    return (action) => {
+      console.log("will dispatch loggerThree", action);
+  
+      // 调用 middleware 链中下一个 middleware 的 dispatch。
+      const returnValue = next(action);
+  
+      console.log("state after dispatch loggerThree", getState());
+  
+      // 一般会是 action 本身，除非
+      // 后面的 middleware 修改了它。
+      return returnValue;
+    };
+  }
 }
 
 export const addAction = () => ({
