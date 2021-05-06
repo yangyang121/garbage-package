@@ -1,4 +1,5 @@
 export function newInstanceOf(l, r) {
+  if (l === null || typeof l !== "object") return false
   const rightPrototype = r.prototype
   let left = Object.getPrototypeOf(l)
   while (true) {
@@ -55,6 +56,39 @@ export function newNew(Con, ...args) {
   return typeof res == "object" ? res : obj
 }
 
+export function objectCreate(proto) {
+  if (typeof proto !== "object" && typeof proto !== "function") {
+    throw new TypeError("Object prototype may only be an Object: " + proto)
+  } else if (proto === null) {
+    throw new Error(
+      "This browser's implementation of Object.create is a shim and doesn't support 'null' as the first argument."
+    )
+  }
+  //实现一个隐藏函数
+  function F() {}
+  //函数的原型设置为参数传进来的原型
+  F.prototype = proto
+  // 返回一个F函数的实例，即此实例的__proto__指向为参数proto
+  return new F()
+}
+
+export function myExtends() {
+  function Parent(name) {
+    this.name = name
+  }
+  Parent.prototype.getNAme = function () {
+    return this.name
+  }
+  function Child(name, age) {
+    Parent.call(this, name)
+    this.age = age
+  }
+  function F() {}
+  F.prototype = Parent.prototype
+  Child.prototype = new F()
+  Child.prototype.constructor = Child
+}
+
 export function curry(fn, ...args) {
   var length = fn.length
   args = args || []
@@ -78,7 +112,7 @@ export function debounce(fn, wait, immediate) {
     if (timer) clearTimeout(timer)
     if (immediate) {
       const callNow = !timer
-      setTimeout(() => {
+      timer = setTimeout(() => {
         timer = null
       }, wait)
       if (callNow) result = fn.apply(context, args)
@@ -112,7 +146,7 @@ export function throttle(fn, wait, options = {}) {
       previous = Date.now()
     } else if (!timer && options.trailing !== false) {
       timer = setTimeout(() => {
-        previous = options.leading === false ? 0 : new Date().getTime()
+        previous = options.leading === false ? 0 : Date.now()
         fn.apply(this, args)
         timer = null
       }, remaining)
