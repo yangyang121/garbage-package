@@ -214,3 +214,39 @@ export function isEqual(a, b, map = new WeakMap()) {
   }
   return false
 }
+
+export function mySymbol(description) {
+  if (this instanceof mySymbol) throw Error("error")
+  const desc = description === undefined ? "undefined" : String(description)
+  const s = Object.create({
+    toString() {
+      return `Symbol(${this.__desc__})`
+    },
+  })
+  Object.defineProperties(s, {
+    __desc__: {
+      enumerable: false,
+      writabel: false,
+      value: desc,
+      configurable: false,
+    },
+  })
+  return s
+}
+
+export function myReduce(arr, callback, init) {
+  let prev = 0
+  let i = 0
+  let len = arr.length
+  if (!init && len === 0) throw new Error("error")
+  if (!init && len === 1) return arr[0]
+  if (!init) {
+    prev = arr[0]
+    i = 1
+  }
+  if (init && len === 0) return init
+  while (i < len) {
+    prev = callback(prev, arr[i], i, arr)
+  }
+  return prev
+}
