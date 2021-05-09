@@ -250,3 +250,24 @@ export function myReduce(arr, callback, init) {
   }
   return prev
 }
+
+export function co(gen) {
+  const ctx = this
+  const args = Array.prototype.slice.call(arguments, 1)
+  return new Promise(function (resolve, reject) {
+    gen = gen.apply(ctx, args)
+
+    function onFulfilled(res) {
+      const result = gen.next(res)
+      next(result)
+    }
+
+    function next(result) {
+      if (result.done) return resolve(result.value)
+      const value = result.value
+      value.then(onFulfilled)
+    }
+
+    onFulfilled()
+  })
+}
