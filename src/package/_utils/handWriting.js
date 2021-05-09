@@ -271,3 +271,106 @@ export function co(gen) {
     onFulfilled()
   })
 }
+
+export function realTimer(fn, wait) {
+  let smallWait = wait / 10
+  let start = Date.now()
+  let counter = 1
+  function helper() {
+    if (counter === 10) {
+      fn()
+      console.log(Date.now() - start)
+      return
+    }
+    const time = counter * smallWait
+    const realTime = Date.now() - start
+    const diff = realTime - time
+    counter++
+    setTimeout(function () {
+      helper()
+    }, smallWait - diff)
+  }
+  setTimeout(function () {
+    helper()
+  }, smallWait)
+}
+
+export function drag(node) {
+  let dragging = false
+  let position = null
+
+  node.addEventListener("mousedown", function (e) {
+    dragging = true
+    position = [e.clientX, e.clientY]
+  })
+
+  document.addEventListener("mousemove", function (e) {
+    if (dragging === false) return null
+    const x = e.clientX
+    const y = e.clientY
+    const deltaX = x - position[0]
+    const deltaY = y - position[1]
+    const left = parseInt(node.style.left || 0)
+    const top = parseInt(node.style.top || 0)
+    node.style.left = left + deltaX + "px"
+    node.style.top = top + deltaY + "px"
+    position = [x, y]
+  })
+  document.addEventListener("mouseup", function (e) {
+    dragging = false
+  })
+}
+
+export function multiRequest(urls = [], maxNum) {
+  const len = urls.length
+  const result = new Array(len).fill(false)
+  let count = 0
+
+  return new Promise((resolve, reject) => {
+    while (count < maxNum) {
+      next()
+    }
+    function next() {
+      let current = count++
+      if (current >= len) {
+        !result.includes(false) && resolve(result)
+        return
+      }
+      const url = urls[current]
+      fetch(url)
+        .then((res) => {
+          result[current] = res
+          if (current < len) {
+            next()
+          }
+        })
+        .catch((err) => {
+          result[current] = err
+          if (current < len) {
+            next()
+          }
+        })
+    }
+  })
+}
+
+export function expand(obj) {
+  const ans = {}
+  function helper(data, path) {
+    if (typeof data === "object") {
+      if (Array.isArray(data)) {
+        for (let i = 0; i < data.length; i++) {
+          helper(data[i], `${path}[${i}]`)
+        }
+      } else {
+        for (let key in data) {
+          helper(data[key], `${path ? path + "." : path}${key}`)
+        }
+      }
+    } else {
+      ans[path] = data
+    }
+  }
+  helper(obj, "")
+  return ans
+}
