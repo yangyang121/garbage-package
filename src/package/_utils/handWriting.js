@@ -374,3 +374,53 @@ export function expand(obj) {
   helper(obj, "")
   return ans
 }
+
+export class EventEmitter {
+  constructor() {
+    this.list = {}
+  }
+
+  on(event, fn) {
+    if (!this.list[event]) this.list[event] = []
+    this.list[event].push(fn)
+  }
+
+  emit(event, ...args) {
+    const fns = this.list[event]
+    const ctx = this
+    if (!fns) return false
+    fns.forEach((fn) => {
+      fn.apply(ctx, args)
+    })
+    return ctx
+  }
+
+  off(event, fn) {
+    const fns = this.list[event]
+    let cb = null
+    if (!fns) return false
+    if (!fn) {
+      this.list[event] = []
+    } else {
+      for (let i = 0, cbLen = fns.length; i < cbLen; i++) {
+        cb = fns[i]
+        if (cb === fn || cb.fn === fn) {
+          fns.splice(i, 1)
+          break
+        }
+      }
+    }
+    return this
+  }
+
+  once(event, fn) {
+    const ctx = this
+    function on() {
+      ctx.off(event, on)
+      fn.apply(ctx, arguments)
+    }
+    on.fn = fn
+    this.on(event, on)
+    return ctx
+  }
+}
