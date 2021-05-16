@@ -357,7 +357,7 @@ export function multiRequest(urls = [], maxNum) {
 export function expand(obj) {
   const ans = {}
   function helper(data, path) {
-    if (typeof data === "object") {
+    if (typeof data === "object" && data !== null) {
       if (Array.isArray(data)) {
         for (let i = 0; i < data.length; i++) {
           helper(data[i], `${path}[${i}]`)
@@ -423,4 +423,38 @@ export class EventEmitter {
     this.on(event, on)
     return ctx
   }
+}
+
+export function isInViewport(dom) {
+  let viewPortHeight =
+    window.innerHeight || document.documentElement.clientHeight
+  let viewPortWidth = window.innerWidth || document.documentElement.clientWidth
+  let { top, left, right, bottom } = dom.getBoundingClientRect()
+
+  return (
+    top >= 0 && left >= 0 && bottom <= viewPortHeight && right <= viewPortWidth
+  )
+}
+
+export function postorderTraversal(root) {
+  if (root === null) return []
+  const ans = []
+  const stack = []
+  let prev = null
+  while (root !== null || stack.length) {
+    while (root !== null) {
+      stack.push(root)
+      root = root.left
+    }
+    root = stack.pop()
+    if (root.right === null || root.right === prev) {
+      ans.push(root.val)
+      prev = root
+      root = null
+    } else {
+      stack.push(root.right)
+      root = root.right
+    }
+  }
+  return ans
 }
