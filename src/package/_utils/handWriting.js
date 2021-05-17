@@ -36,6 +36,7 @@ export function newApply(context, fn, args) {
 //   var args = Array.prototype.slice.call(arguments, 1)
 //   var bindArgs = []
 //   var fNOP = function () {}
+//   fNOP.prototype = this.prototype
 
 //   var fBound = function () {
 //     bindArgs = Array.prototype.slice.call(arguments)
@@ -44,7 +45,6 @@ export function newApply(context, fn, args) {
 //       args.concat(bindArgs)
 //     )
 //   }
-//   fNOP.prototype = this.prototype
 //   fBound.prototype = new fNOP()
 //   return fBound
 // }
@@ -76,7 +76,7 @@ export function myExtends() {
   function Parent(name) {
     this.name = name
   }
-  Parent.prototype.getNAme = function () {
+  Parent.prototype.getName = function () {
     return this.name
   }
   function Child(name, age) {
@@ -102,6 +102,17 @@ export function curry(fn, ...args) {
       return fn.apply(this, args)
     }
   }
+}
+
+export function curryUnsure(fn, ...presetArgs) {
+  function curried(restArgs) {
+    const allArgs = [...presetArgs, ...restArgs]
+    return curry.call(null, fn, ...allArgs)
+  }
+  curried.toString = function () {
+    return fn.apply(null, presetArgs)
+  }
+  return curried
 }
 
 export function debounce(fn, wait, immediate) {
@@ -201,6 +212,7 @@ export function transformToFlat(data) {
 
 export function isEqual(a, b, map = new WeakMap()) {
   if (a === b) return true
+  if (Number.isNaN(a) && Number.isNaN(b)) return true
   if (map.has(a) || map.has(b)) return true
   map.set(a, b)
   if (typeof a === "object" && typeof b === "object") {
